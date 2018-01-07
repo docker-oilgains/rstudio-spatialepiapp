@@ -31,7 +31,9 @@ RUN echo "export JAVA_HOME=/usr/lib/jvm/java-8-oracle" >> ~/.bashrc
 # COPY install-9.4_linux.jar /home/rstudio
 COPY install-9.4_linux.jar .
 
-# automate installation of SatStats
+# automate installation of SaTScan for spatial statistics. 
+# Send response to prompts using `expect`
+# spawn and send are `expect` commands
 RUN expect -c "set timeout 20;\
         spawn  java -jar install-9.4_linux.jar;\
         expect \"press 1 to continue\";      send \"1\n\" ;\
