@@ -13,5 +13,7 @@ RUN install2.r --error \
 RUN echo "r <- getOption('repos'); r['CRAN'] <- 'https://inla.r-inla-download.org/R/stable'; options(repos = r);" > ~/.Rprofile
 RUN Rscript -e "install.packages('INLA', dep=TRUE)"
 
+COPY . /data
+
 
 
