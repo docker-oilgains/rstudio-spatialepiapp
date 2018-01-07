@@ -28,14 +28,13 @@ RUN update-java-alternatives -s java-8-oracle
 
 RUN echo "export JAVA_HOME=/usr/lib/jvm/java-8-oracle" >> ~/.bashrc  
 
-# COPY install-9.4_linux.jar /home/rstudio
-COPY install-9.4_linux.jar .
-
+# copy SaTScan installer
+COPY satscan-install-9.4_linux.jar .
 # automate installation of SaTScan for spatial statistics. 
 # Send response to prompts using `expect`
 # spawn and send are `expect` commands
 RUN expect -c "set timeout 20;\
-        spawn  java -jar install-9.4_linux.jar;\
+        spawn  java -jar satscan-install-9.4_linux.jar;\
         expect \"press 1 to continue\";      send \"1\n\" ;\
         expect \"press Enter to continue\";  send \"\n\" ;\
         expect \"press 1 to accept\";        send \"1\n\" ;\
