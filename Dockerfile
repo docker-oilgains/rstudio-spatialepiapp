@@ -1,19 +1,23 @@
 FROM rocker/rstudio-stable:latest
+
 RUN apt-get update \
  && apt-get install -y --no-install-recommends \
-    software-properties-common \
-    expect \
-    wget \
+    # `expect` to be used in SatScan installation
+    expect \                      
+    # for Java installation
+    software-properties-common \  
+    wget \          
     gnupg \
     dirmngr \
-    libproj-dev \
-    libgdal-dev
+    # required for rgeos and rgdal R packages installation
+    libproj-dev \   
+    libgdal-dev     
 
+
+# Install Java.    
 ENV JAVA_VER 8
 ENV JAVA_HOME /usr/lib/jvm/java-8-oracle
 
-    
-# Install Java.
 RUN echo 'deb http://ppa.launchpad.net/webupd8team/java/ubuntu xenial main' >> /etc/apt/sources.list.d/webupd8team-java.list && \
   echo 'deb-src http://ppa.launchpad.net/webupd8team/java/ubuntu xenial main' >> /etc/apt/sources.list.d/webupd8team-java.list && \
   apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys EEA14886 && \
@@ -23,16 +27,15 @@ RUN echo 'deb http://ppa.launchpad.net/webupd8team/java/ubuntu xenial main' >> /
   apt-get clean && \
   rm -rf /var/cache/oracle-jdk${JAVA_VER}-installer  
 
-
 RUN update-java-alternatives -s java-8-oracle
-
 RUN echo "export JAVA_HOME=/usr/lib/jvm/java-8-oracle" >> ~/.bashrc  
+
 
 # copy SaTScan installer
 COPY satscan-install-9.4_linux.jar .
 # automate installation of SaTScan for spatial statistics. 
 # Send response to prompts using `expect`
-# spawn and send are `expect` commands
+# spawn and send are `expect` commands. This is a `expect` script.
 RUN expect -c "set timeout 20;\
         spawn  java -jar satscan-install-9.4_linux.jar;\
         expect \"press 1 to continue\";      send \"1\n\" ;\
@@ -50,7 +53,7 @@ RUN install2.r --error \
     rgdal  \
     SpatialEpiApp
     
-# add repo for INLA
+# add repo for INLA and install
 RUN echo "r <- getOption('repos'); r['CRAN'] <- 'https://inla.r-inla-download.org/R/stable'; options(repos = r);" > ~/.Rprofile
 RUN Rscript -e "install.packages('INLA', dep=TRUE)"
 
